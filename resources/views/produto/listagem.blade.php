@@ -7,6 +7,12 @@
         </div>
     @endif
 
+    @if(!empty($_GET['retorno']))
+        <div class="alert alert-success" role="alert">
+            Produto removido com sucesso!
+        </div>
+    @endif
+
     @if(empty($produtos))
         <div class="alert alert-danger">
             Você não tem nenhum produto cadastrado.
@@ -21,9 +27,16 @@
                     <td> {{$p->valor}} </td>
                     <td> {{$p->descricao}} </td>
                     <td> {{$p->quantidade}} </td>
+                    <td> {{$p->tamanho}}</td>
+                    <td> {{$p->categoria->nome}}</td>
                     <td>
                         <a href="/produtos/mostra/{{$p->id}}">
-                            <span class="glyphicon glyphicon-search"></span>
+                            <span class="btn btn-primary">Mostrar</span>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/produtos/removeProduto/{{$p->id}}">
+                            <span class="btn btn-warning">Remover</span>
                         </a>
                     </td>
                 </tr>

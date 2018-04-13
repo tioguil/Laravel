@@ -11,6 +11,7 @@
 |
 */
 
+Route::get('/', "HomeController@index");
 
 Route::get('/produtos', "ProdutoController@lista");
 
@@ -18,17 +19,15 @@ Route::get('/produtos/mostra/{id}', 'ProdutoController@mostra');
 
 Route::get('produtos/novo', 'ProdutoController@novo');
 
-Route::post('produtos/adicionaProduto', 'ProdutoController@adicionaProduto');
+Route::post('produtos/adicionaProduto','ProdutoController@adicionaProduto');
 
 Route::get('/produtos/json', 'ProdutoController@listaJson');
 
 Route::get('/produtos/download', 'ProdutoController@download');
 
+Route::get('produtos/removeProduto/{id}', 'ProdutoController@removeProduto');
 
-
-
-
-
+Route::get('/login', 'LoginController@login');
 
 
 Route::get('home', 'HomeController@index');

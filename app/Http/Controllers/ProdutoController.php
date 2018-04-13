@@ -8,58 +8,65 @@
 
 namespace app\Http\Controllers;
 
+use App\Categoria;
+use App\Http\Requests\ProdutosRequest;
+use App\Produto;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Request;
 
 class ProdutoController extends Controller {
 
+    public function __construct(){
+        $this->middleware('loginMiddle',
+            ['only' => ['adicionaProduto', 'removeProduto']]);
+    }
+
     public function lista(){
 
-        $produtos = DB::select('select * from produtos');
+        $produtos = Produto::All();
 
         return view('produto.listagem')->with('produtos', $produtos);
     }
 
-    public function mostra(){
+    public function mostra($id){
 
-        $id = Request::route('id');
-
-        $resposta = DB::select('select * from produtos where id = ?', [$id]);
+        $resposta = Produto::find($id);
 
         if(empty($resposta)) {
             return "Esse produto não existe";
         }
-        return view('produto.detalhes')->with('p', $resposta[0]);
+        return view('produto.detalhes')->with('p', $resposta);
     }
 
     public function novo(){
-        return view('produto.formulario');
+        return view('produto.formulario')->with('categorias', Categoria::all());
     }
 
-    public function adicionaProduto(){
+    public function adicionaProduto(ProdutosRequest $request){
 
-        $nome = Request::input('nome');
-        $descricao = Request::input('descricao');
-        $valor = Request::input('valor');
-        $quantidade = Request::input('quantidade');
+        Produto::create($request->all());
 
-        DB::insert('insert into produtos values (null, ?, ?, ?, ?)', array($nome, $valor, $descricao, $quantidade ));
-
-        $retorno = 'Produto '.$nome.' foi adicionado com sucesso!';
-        //return view('produto.formulario')->with('retorno', $retorno);
-
-        return redirect('/produtos')->withInput(Request::only('nome'));
+       return redirect()->action('ProdutoController@lista')->withInput(Request::only('nome'));
     }
 
     public function listaJson(){
-        $produtos = DB::select('select * from produtos');
+        $produtos = Produto::all();
         return response()->json($produtos);
     }
 
     public function download(){
 
         return response()->download('test.txt');
+    }
+
+    public function removeProduto($id){
+        $produto = Produto::find($id);
+        $produto->delete();
+
+        $retorno = "produto removido com sucesso";
+        return redirect()->action('ProdutoController@lista', ['retorno' => $retorno]);
+
     }
 
 }
